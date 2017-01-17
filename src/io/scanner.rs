@@ -3,7 +3,7 @@
 /// # Example
 /// ```
 /// use contest::io::scanner;
-/// let mut sc = scanner::Scanner::new("1 2 \n \r\t \n 3.5 ".as_bytes());
+/// let mut sc = scanner::Scanner::new("1 2 \n\n \r\t \n 3.5".as_bytes());
 /// assert_eq!("1".to_string(), sc.next::<String>().unwrap());
 /// assert_eq!(2, sc.next().unwrap());
 /// assert_eq!(3.5, sc.next().unwrap());
@@ -35,15 +35,10 @@ impl<R: io::Read> Scanner<R> {
         self.next_string().map(|s| s.parse::<T>().expect("Parse failed: "))
     }
     fn next_string(&mut self) -> Option<String> {
-        match self.buf.pop() {
-            Some(s) => Some(s),
-            None => {
-                match self.update() {
-                    true => self.next_string(),
-                    false => None,
-                }
-            }
-        }
+        self.buf.pop().or_else(|| match self.update() {
+            true => self.next_string(),
+            false => None,
+        })
     }
     #[inline]
     fn update(&mut self) -> bool {
