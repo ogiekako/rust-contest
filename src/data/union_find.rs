@@ -8,7 +8,7 @@
 /// ```
 /// use contest::data::UnionFind;
 /// let mut uf = UnionFind::new(4);
-/// uf.union(0,1);
+/// uf.union(0, 1);
 /// assert_eq!(2, uf.size(0));
 /// assert_eq!(uf.root(0), uf.root(1));
 /// ```
@@ -18,6 +18,7 @@ pub struct UnionFind {
 
 impl UnionFind {
     /// Creates n disjoint singleton sets.
+    #[inline]
     pub fn new(n: usize) -> UnionFind {
         UnionFind { tree: vec![-1; n] }
     }
