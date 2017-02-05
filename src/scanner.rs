@@ -3,11 +3,14 @@
 /// # Example
 /// ```
 /// use contest::scanner;
-/// let mut sc = scanner::Scanner::new("1 2 \n\n \r\t \n 3.5".as_bytes());
+/// let mut sc = scanner::new("1 2 \n\n \r\t \n 3.5".as_bytes());
 /// assert_eq!("1".to_string(), sc.next::<String>().unwrap());
 /// assert_eq!(2, sc.next().unwrap());
 /// assert_eq!(3.5, sc.next().unwrap());
 /// assert_eq!(None, sc.next::<i32>());
+///
+/// // To create a scanner from stdin:
+/// scanner::new(std::io::stdin());
 /// ```
 
 use std;
@@ -20,8 +23,13 @@ pub struct Scanner<R: io::Read> {
     buf: Vec<String>,
 }
 
+pub fn new<R: io::Read>(r: R) -> Scanner<R> {
+    Scanner::new(r)
+}
+
 impl<R: io::Read> Scanner<R> {
-    pub fn new(r: R) -> Scanner<R> {
+    #[inline]
+    fn new(r: R) -> Scanner<R> {
         Scanner {
             br: io::BufReader::new(r),
             buf: vec![],
