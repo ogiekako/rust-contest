@@ -2,7 +2,7 @@
 ///
 /// # Example
 /// ```
-/// use contest::io::scanner;
+/// use contest::scanner;
 /// let mut sc = scanner::Scanner::new("1 2 \n\n \r\t \n 3.5".as_bytes());
 /// assert_eq!("1".to_string(), sc.next::<String>().unwrap());
 /// assert_eq!(2, sc.next().unwrap());
