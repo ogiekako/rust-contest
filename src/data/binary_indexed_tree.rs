@@ -15,27 +15,26 @@ impl<T> BIT<T>
     }
 
     // add w to the i-th element (0-origin)
-    pub fn add(&mut self, i: usize, w: T) {
-        if i + 1 >= self.bit.len() {
+    pub fn add(&mut self, mut i: usize, w: T) {
+        i += 1;
+        if i >= self.bit.len() {
             panic!("Index out of bounds: {}", i);
         }
-        let mut x = (i + 1) as i32;
-        while x < self.bit.len() as i32 {
-            self.bit[x as usize] += w;
-            x += x & -x;
+        while i < self.bit.len() {
+            self.bit[i] += w;
+            i += i & i.wrapping_neg();
         }
     }
 
     // get the [0, i) sum.
-    pub fn sum(&self, i: usize) -> T {
+    pub fn sum(&self, mut i: usize) -> T {
         if i >= self.bit.len() {
             panic!("Index out of bounds: {}", i);
         }
         let mut res = T::default();
-        let mut x = i as i32;
-        while x > 0 {
-            res += self.bit[x as usize];
-            x -= x & -x;
+        while i > 0 {
+            res += self.bit[i];
+            i -= i & i.wrapping_neg();
         }
         res
     }
