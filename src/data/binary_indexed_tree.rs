@@ -7,7 +7,7 @@ pub struct BIT<T> {
     bit: Vec<T>,
 }
 
-impl<'a, T: 'a> BIT<T>
+impl<T> BIT<T>
     where T: AddAssign + Copy + Default
 {
     pub fn new(n: usize) -> BIT<T> {
@@ -15,7 +15,7 @@ impl<'a, T: 'a> BIT<T>
     }
 
     // add w to the i-th element (0-origin)
-    pub fn add(&'a mut self, i: usize, w: T) {
+    pub fn add(&mut self, i: usize, w: T) {
         if i + 1 >= self.bit.len() {
             panic!("Index out of bounds: {}", i);
         }
