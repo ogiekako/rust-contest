@@ -1,17 +1,22 @@
 // Binary indexed tree
 // Referred to http://hos.ac/slides/20140319_bit.pdf
 
-use std::ops::AddAssign;
-
-pub struct BIT<T> {
+pub struct BIT<T, F> {
     bit: Vec<T>,
+    id: T,
+    op: F,
 }
 
-impl<T> BIT<T>
-    where T: AddAssign + Copy + Default
+impl<T, F> BIT<T, F>
+    where T: Clone,
+          F: Fn(&T, &T) -> T
 {
-    pub fn new(n: usize) -> BIT<T> {
-        BIT { bit: vec![T::default(); n + 1] }
+    pub fn new(n: usize, id: T, op: F) -> BIT<T, F> {
+        BIT {
+            bit: vec![id.clone(); n + 1],
+            id: id,
+            op: op,
+        }
     }
 
     // add w to the i-th element (0-origin)
@@ -21,7 +26,7 @@ impl<T> BIT<T>
             panic!("Index out of bounds: {}", i);
         }
         while i < self.bit.len() {
-            self.bit[i] += w;
+            self.bit[i] = (self.op)(&self.bit[i], &w);
             i += i & i.wrapping_neg();
         }
     }
@@ -31,9 +36,9 @@ impl<T> BIT<T>
         if i >= self.bit.len() {
             panic!("Index out of bounds: {}", i);
         }
-        let mut res = T::default();
+        let mut res = self.id.clone();
         while i > 0 {
-            res += self.bit[i];
+            res = (self.op)(&res, &self.bit[i]);
             i -= i & i.wrapping_neg();
         }
         res
@@ -45,7 +50,7 @@ mod tests {
     use super::BIT;
     #[test]
     fn test() {
-        let mut bit = BIT::new(5);
+        let mut bit = BIT::new(5, 0, |&x, &y| x + y);
         bit.add(0, 10);
         bit.add(1, -20);
         bit.add(3, 30);
@@ -58,7 +63,7 @@ mod tests {
         assert_eq!(20, bit.sum(4));
         assert_eq!(60, bit.sum(5));
 
-        let mut bit = BIT::new(1);
+        let mut bit = BIT::new(1, 0.0, |&x, &y| x + y);
         bit.add(0, 0.5);
         assert_eq!(0.5, bit.sum(1));
     }
