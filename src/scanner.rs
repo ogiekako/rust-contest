@@ -4,10 +4,9 @@
 /// ```
 /// use contest::scanner;
 /// let mut sc = scanner::new("1 2 \n\n \r\t \n 3.5".as_bytes());
-/// assert_eq!("1".to_string(), sc.next::<String>().unwrap());
-/// assert_eq!(2, sc.next().unwrap());
-/// assert_eq!(3.5, sc.next().unwrap());
-/// assert_eq!(None, sc.next::<i32>());
+/// assert_eq!("1".to_string(), sc.next::<String>());
+/// assert_eq!(2, sc.next());
+/// assert_eq!(3.5, sc.next());
 ///
 /// // To create a scanner from stdin:
 /// scanner::new(std::io::stdin());
@@ -36,11 +35,11 @@ impl<R: io::Read> Scanner<R> {
         }
     }
     #[inline]
-    pub fn next<T>(&mut self) -> Option<T>
+    pub fn next<T>(&mut self) -> T
         where T: std::str::FromStr,
               T::Err: std::fmt::Debug
     {
-        self.next_string().map(|s| s.parse::<T>().expect("Parse failed: "))
+        self.next_string().map(|s| s.parse::<T>().expect("Parse failed: ")).expect("Unexpected EOF")
     }
     fn next_string(&mut self) -> Option<String> {
         self.buf.pop().or_else(|| match self.update() {
@@ -60,4 +59,11 @@ impl<R: io::Read> Scanner<R> {
             }
         }
     }
+}
+
+#[test]
+fn next() {
+    let mut sc = new("hoge".as_bytes());
+    let s: String = sc.next();
+    assert_eq!("hoge", s);
 }
